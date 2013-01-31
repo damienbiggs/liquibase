@@ -7,6 +7,7 @@ import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.core.UpdateStatement;
+import liquibase.structure.core.Column;
 
 import java.util.Date;
 
@@ -30,6 +31,13 @@ public class UpdateGenerator extends AbstractSqlGenerator<UpdateStatement> {
         sql.deleteCharAt(sql.lastIndexOf(","));
         if (statement.getWhereClause() != null) {
             String fixedWhereClause = "WHERE " + statement.getWhereClause().trim();
+            for (String columnName : statement.getWhereColumnNames()) {
+                if (columnName == null) {
+                    continue;
+                }
+                fixedWhereClause = fixedWhereClause.replaceFirst(":name",
+                        database.escapeObjectName(columnName, Column.class));
+            }
             for (Object param : statement.getWhereParameters()) {
                 fixedWhereClause = fixedWhereClause.replaceFirst("\\?", DataTypeFactory.getInstance().fromObject(param, database).objectToSql(param, database));
             }

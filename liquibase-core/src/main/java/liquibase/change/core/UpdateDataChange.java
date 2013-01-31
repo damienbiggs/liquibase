@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @DatabaseChange(name = "update", description = "Update Data", priority = ChangeMetaData.PRIORITY_DEFAULT, appliesTo = "table")
-public class UpdateDataChange extends AbstractChange implements ChangeWithColumns<ColumnConfig> {
+public class UpdateDataChange extends AbstractModifyDataChange implements ChangeWithColumns<ColumnConfig> {
 
     private String catalogName;
     private String schemaName;
@@ -23,33 +23,6 @@ public class UpdateDataChange extends AbstractChange implements ChangeWithColumn
 
     public UpdateDataChange() {
         columns = new ArrayList<ColumnConfig>();
-    }
-
-    @DatabaseChangeProperty(mustEqualExisting ="column.relation.catalog")
-    public String getCatalogName() {
-        return catalogName;
-    }
-
-    public void setCatalogName(String catalogName) {
-        this.catalogName = catalogName;
-    }
-
-    @DatabaseChangeProperty(mustEqualExisting ="column.relation.schema")
-    public String getSchemaName() {
-        return schemaName;
-    }
-
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
-    }
-
-    @DatabaseChangeProperty(requiredForDatabase = "all", mustEqualExisting = "table")
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
     }
 
     @DatabaseChangeProperty(requiredForDatabase = "all")
@@ -67,14 +40,6 @@ public class UpdateDataChange extends AbstractChange implements ChangeWithColumn
 
     public void removeColumn(ColumnConfig column) {
         columns.remove(column);
-    }
-
-    public String getWhereClause() {
-        return whereClause;
-    }
-
-    public void setWhereClause(String whereClause) {
-        this.whereClause = whereClause;
     }
 
     public SqlStatement[] generateStatements(Database database) {

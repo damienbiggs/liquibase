@@ -277,6 +277,7 @@
             <column name="blobColumn" type="java.sql.Types.BLOB"/>
             <column name="booleanColumn" type="java.sql.Types.BOOLEAN"/>
         </createTable>
+
     </changeSet>
 
     <changeSet id="createTableNamedUqConst" author="nvoxland">
@@ -368,7 +369,9 @@
             <column name="varcharColumn" value="new column 1 value"/>
             <column name="dateCol" valueDate="2008-01-01"/>
             <column name="intCol" valueNumeric="11"/>
-            <where>id=1</where>
+            <whereWithParams clause="id=?">
+                <param valueNumeric="134" />
+            </whereWithParams>
         </update>
         <update tableName="updateTest">
             <column name="varcharColumn" value="new column 2 value"/>
@@ -880,21 +883,56 @@
 
     <!-- should work for all databases but only tested on h2, oracle and psotgres for now -->
     <changeSet id="insertRecordWithSequence" author="dbiggs" dbms="postgresql, h2, oracle">
-      <createTable tableName="insertTest">
+      <createTable tableName="insert_test">
         <column name="id" type="int">
           <constraints primaryKey="true"/>
         </column>
-        <column name="stringValue" type="varchar(10)" />
+        <column name="string_value" type="varchar(10)" />
       </createTable>
       <createSequence sequenceName="insertTest_seq" />
 
-      <insert tableName="insertTest">
+      <insert tableName="insert_test">
         <column name="id" valueSequenceNext="insertTest_seq" />
-        <column name="stringValue" value="testVal1" />
+        <column name="string_value" value="testVal1" />
       </insert>
-      <insert tableName="insertTest">
+      <insert tableName="insert_test">
         <column name="id" valueSequenceNext="insertTest_seq" />
-        <column name="stringValue" value="testVal2" />
+        <column name="string_value" value="testVal2" />
       </insert>
+
+    </changeSet>
+
+    <changeSet id="testdDeleteWithParameters" author="dbiggs">
+        <preConditions>
+            <sqlCheck expectedResult="2">select count(*) from insert_test;</sqlCheck>
+        </preConditions>
+
+        <delete tableName="insert_test">
+            <whereWithParams clause=":name = :value">
+                <param name="string_value" value="testVal2" />
+            </whereWithParams>
+        </delete>
+    </changeSet>
+
+    <changeSet id="verifyDeleteWithParameters" author="dbiggs">
+        <preConditions>
+            <sqlCheck expectedResult="1">select count(*) from insert_test;</sqlCheck>
+        </preConditions>
+    </changeSet>
+
+    <changeSet id="updateWithParameters" author="dbiggs">
+        <update tableName="insert_test">
+            <column name="string_value" value="updatedVal" />
+            <whereWithParams clause="id &lt; :value AND :name=:value">
+                <param valueSequenceNext="insertTest_seq"/>
+                <param name="string_value" value="testVal1"/>
+            </whereWithParams>
+        </update>
+    </changeSet>
+
+    <changeSet id="verifyUpdateWithParameters" author="dbiggs">
+        <preConditions>
+            <sqlCheck expectedResult="1">select count(*) from insert_test where string_value = 'updatedVal';</sqlCheck>
+        </preConditions>
     </changeSet>
 </databaseChangeLog>
