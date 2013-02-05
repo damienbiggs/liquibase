@@ -302,9 +302,9 @@ public class MSSQLDatabase extends AbstractJdbcDatabase {
     @Override
     public String escapeViewName(String catalogName, String schemaName, String viewName) {
         if (StringUtils.trimToNull(schemaName) == null) {
-            return escapeObjectName(viewName, View.class);
+            return correctObjectName(viewName, View.class);
         } else {
-            return escapeObjectName(schemaName, Schema.class)+"."+ escapeObjectName(viewName, Schema.class);
+            return correctObjectName(schemaName, Schema.class)+"."+ correctObjectName(viewName, Schema.class);
         }
 
     }

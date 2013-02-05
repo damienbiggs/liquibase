@@ -73,6 +73,14 @@
         </xsd:restriction>
     </xsd:simpleType>
 
+    <xsd:simpleType name="objectQuotingStrategy">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="LEGACY" />
+            <xsd:enumeration value="QUOTE_ALL_OBJECTS" />
+            <xsd:enumeration value="QUOTE_ONLY_RESERVED_NAMES" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
 	<!-- This is the main (root) part of the xsd -->
 	<xsd:element name="databaseChangeLog">
 		<xsd:complexType>
@@ -228,6 +236,7 @@
 	<!-- Attributes for changeSet -->
 	<xsd:attributeGroup name="changeLogAttributes">
 		<xsd:attribute name="logicalFilePath" type="xsd:string" />
+        <xsd:attribute name="objectQuotingStrategy" type="objectQuotingStrategy" default="LEGACY" />
 	</xsd:attributeGroup>
 
 	<!-- Attributes for changeSet -->
@@ -242,6 +251,7 @@
         <xsd:attribute name="onValidationFail" type="onChangeSetValidationFail" />
 		<xsd:attribute name="runInTransaction" type="booleanExp" default="true" />
 		<xsd:attribute name="logicalFilePath" type="xsd:string" />
+        <xsd:attribute name="objectQuotingStrategy" type="objectQuotingStrategy" />
 	</xsd:attributeGroup>
 
 	<!-- Attributes for constraints -->
@@ -253,6 +263,8 @@
 		<xsd:attribute name="unique" type="booleanExp" />
 		<xsd:attribute name="uniqueConstraintName" type="xsd:string" />
 		<xsd:attribute name="references" type="xsd:string" />
+        <xsd:attribute name="referencedTableName" type="xsd:string"/>
+        <xsd:attribute name="referencedColumnNames" type="xsd:string"/>
 		<xsd:attribute name="foreignKeyName" type="xsd:string" />
 		<xsd:attribute name="deleteCascade" type="booleanExp" />
 		<xsd:attribute name="deferrable" type="booleanExp" />

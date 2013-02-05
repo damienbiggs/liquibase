@@ -3,7 +3,9 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
+        objectQuotingStrategy="QUOTE_ALL_OBJECTS"
+        >
 
     <preConditions onSqlOutput="IGNORE" >
             <dbms type="h2"/>
@@ -117,7 +119,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="person_id" type="int">
-                <constraints nullable="false" foreignKeyName="fk_test_person" references="person(id)"/>
+                <constraints nullable="false" foreignKeyName="fk_test_person" referencedTableName="person" referencedColumnNames="id"/>
             </column>
         </createTable>
     </changeSet>
@@ -148,12 +150,12 @@
     </changeSet>
 
     <changeSet id="15" author="nvoxland">
-        <sql>update liquibaseRunInfo set timesRan=timesRan+1</sql>
+        <sql>update "liquibaseRunInfo" set "timesRan"="timesRan"+1</sql>
     </changeSet>
 
     <changeSet id="16" author="nvoxland">
         <createView viewName="personView">
-            select * from person
+            select * from "person"
         </createView>
     </changeSet>
 
@@ -300,7 +302,7 @@
 
     <changeSet id="51" author="nvoxland">
         <createView viewName="personView">
-            select id, fullname from person
+            select "id", "fullname" from "person"
         </createView>
     </changeSet>
 

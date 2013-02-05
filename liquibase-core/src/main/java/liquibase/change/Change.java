@@ -126,4 +126,6 @@ public interface Change {
      * @throws UnsupportedChangeException if this change is not supported by the {@link Database} passed as argument
      */
     public boolean generateRollbackStatementsVolatile(Database database);
+
+
 }

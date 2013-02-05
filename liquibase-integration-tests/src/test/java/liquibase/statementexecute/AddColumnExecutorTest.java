@@ -83,7 +83,7 @@ public class AddColumnExecutorTest extends AbstractExecuteTest {
     @SuppressWarnings("unchecked")
 	@Test
     public void generateSql_foreignKey() throws Exception {
-        this.statementUnderTest = new AddColumnStatement(null, "table_name", "column_name", "int", null, new PrimaryKeyConstraint(), new ForeignKeyConstraint("fk_test_fk", "table_name(column_name)"));
+        this.statementUnderTest = new AddColumnStatement(null, "table_name", "column_name", "int", null, new PrimaryKeyConstraint(), new ForeignKeyConstraint("fk_test_fk", "table_name(column_name)", "table_name", "column"));
 
         assertCorrect(new String[] {"alter table [table_name] add [column_name] int not null primary key", "alter table [table_name] add constraint [fk_test_fk] foreign key ([column_name]) references [table_name]([column_name])"}, HsqlDatabase.class, MaxDBDatabase.class);
         assertCorrect(new String[] {"alter table [table_name] add [column_name] int primary key not null", "alter table [table_name] add constraint [fk_test_fk] foreign key ([column_name]) references [table_name]([column_name])"}, SybaseASADatabase.class, SybaseDatabase.class);

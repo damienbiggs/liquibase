@@ -49,7 +49,7 @@ public class AddDefaultValueGeneratorPostgres extends AddDefaultValueGenerator {
         Sql alterSequenceOwner = new UnparsedSql("ALTER SEQUENCE " + database.escapeSequenceName(statement.getCatalogName(),
                 statement.getSchemaName(), sequenceFunction.getValue()) + " OWNED BY " +
                 database.escapeTableName(statement.getCatalogName(), statement.getSchemaName(), statement.getTableName()) + "."
-                + database.escapeObjectName(statement.getColumnName(), Column.class),
+                + database.correctObjectName(statement.getColumnName(), Column.class),
                 new Column()
                         .setRelation(new Table().setName(statement.getTableName()).setSchema(new Schema(statement.getCatalogName(), statement.getSchemaName())))
                         .setName(statement.getColumnName()),

@@ -3,7 +3,6 @@ package liquibase.database;
 import liquibase.CatalogAndSchema;
 import liquibase.change.Change;
 import liquibase.change.CheckSum;
-import liquibase.change.core.*;
 import liquibase.changelog.ChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
 import liquibase.changelog.RanChangeSet;
@@ -14,7 +13,6 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.diff.DiffGeneratorFactory;
 import liquibase.diff.DiffResult;
 import liquibase.diff.compare.CompareControl;
-import liquibase.diff.compare.DatabaseObjectComparator;
 import liquibase.diff.compare.DatabaseObjectComparatorFactory;
 import liquibase.diff.output.DiffOutputControl;
 import liquibase.diff.output.changelog.DiffToChangeLog;
@@ -97,6 +95,8 @@ public abstract class AbstractJdbcDatabase implements Database {
     protected BigInteger defaultAutoIncrementBy = BigInteger.ONE;
     // most databases either lowercase or uppercase unuqoted objects such as table and column names.
     protected Boolean unquotedObjectsAreUppercased = null;
+    // whether object names should be quoted
+    protected ObjectQuotingStrategy quotingStrategy = ObjectQuotingStrategy.LEGACY;
 
     protected AbstractJdbcDatabase() {
         this.dateFunctions.add(new DatabaseFunction(getCurrentDateTimeFunction()));
@@ -278,8 +278,8 @@ public abstract class AbstractJdbcDatabase implements Database {
     }
 
     public String correctObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
-        if (unquotedObjectsAreUppercased == null || objectName == null ||
-                (objectName.startsWith("\"") && objectName.endsWith("\""))) {
+        if (quotingStrategy == ObjectQuotingStrategy.QUOTE_ALL_OBJECTS || unquotedObjectsAreUppercased == null
+                || objectName == null || (objectName.startsWith("\"") && objectName.endsWith("\""))) {
             return objectName;
         } else if (unquotedObjectsAreUppercased == Boolean.TRUE) {
             return objectName.toUpperCase();
@@ -324,11 +324,11 @@ public abstract class AbstractJdbcDatabase implements Database {
     }
 
     public void setDefaultCatalogName(String defaultCatalogName) {
-        this.defaultCatalogName = correctObjectName(defaultCatalogName, Catalog.class);
+        this.defaultCatalogName = escapeObjectName(defaultCatalogName, Catalog.class);
     }
 
     public void setDefaultSchemaName(String schemaName) {
-        this.defaultSchemaName = correctObjectName(schemaName, Schema.class);
+        this.defaultSchemaName = escapeObjectName(schemaName, Schema.class);
     }
 
     /**
@@ -792,6 +792,13 @@ public abstract class AbstractJdbcDatabase implements Database {
         return false;
     }
 
+    /*
+    * Check if given string starts with numeric values that may cause problems and should be escaped.
+    */
+    protected boolean startsWithNumeric(String objectName) {
+        return objectName.matches("^[0-9].*");
+    }
+
 // ------- DATABASE OBJECT DROPPING METHODS ---- //
 
     /**
@@ -900,7 +907,7 @@ public abstract class AbstractJdbcDatabase implements Database {
         try {
             int totalRows = ExecutorService.getInstance().getExecutor(this).queryForInt(new SelectFromDatabaseChangeLogStatement("COUNT(*)"));
             if (totalRows == 0) {
-                ChangeSet emptyChangeSet = new ChangeSet(String.valueOf(new Date().getTime()), "liquibase", false, false, "liquibase-internal", null, null);
+                ChangeSet emptyChangeSet = new ChangeSet(String.valueOf(new Date().getTime()), "liquibase", false, false, "liquibase-internal", null, null, quotingStrategy);
                 this.markChangeSetExecStatus(emptyChangeSet, ChangeSet.ExecType.EXECUTED);
             }
 
@@ -976,6 +983,19 @@ public abstract class AbstractJdbcDatabase implements Database {
     }
 
     public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
+        if (objectName == null || quotingStrategy == ObjectQuotingStrategy.LEGACY) {
+            return objectName;
+        } else if (objectName.contains("-") || startsWithNumeric(objectName) || isReservedWord(objectName)) {
+            return "\""+objectName+"\"";
+        } else if (quotingStrategy == ObjectQuotingStrategy.QUOTE_ALL_OBJECTS && unquotedObjectsAreUppercased != null) {
+            // only quote if the case does not match the default behavior
+            if (unquotedObjectsAreUppercased && !objectName.toUpperCase().equals(objectName)) {
+                // if left unquoted, the name would be uppercased but it's currently not uppercased
+                return "\"" + objectName + "\"";
+            } else if (!unquotedObjectsAreUppercased && !objectName.toLowerCase().equals(objectName)) {
+                return "\"" + objectName + "\"";
+            }
+        }
         return objectName;
     }
 
@@ -1394,5 +1414,9 @@ public abstract class AbstractJdbcDatabase implements Database {
 
     public boolean dataTypeIsNotModifiable(final String typeName) {
         return unmodifiableDataTypes.contains(typeName.toLowerCase());
+    }
+
+    public void setObjectQuotingStrategy(ObjectQuotingStrategy quotingStrategy) {
+        this.quotingStrategy = quotingStrategy;
     }
 }

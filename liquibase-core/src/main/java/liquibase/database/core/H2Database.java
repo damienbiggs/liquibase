@@ -183,16 +183,6 @@ public class H2Database extends AbstractJdbcDatabase {
 
 
     @Override
-    public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
-    	if (objectName != null) {
-            if (isReservedWord(objectName)) {
-                return "\""+objectName.toUpperCase()+"\"";
-            }
-    	}
-        return objectName;
-    }
-
-    @Override
     public boolean isReservedWord(String objectName) {
         return keywords.contains(objectName.toUpperCase());
     }

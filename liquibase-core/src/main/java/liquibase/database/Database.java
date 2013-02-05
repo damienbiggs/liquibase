@@ -295,6 +295,7 @@ public interface Database extends PrioritizedService {
 
     /**
      * Fix the object name to the format the database expects, handling changes in case, etc.
+     * Quotes the corrected name if necessary
      */
     String correctObjectName(String name, Class<? extends DatabaseObject> objectType);
 
@@ -312,5 +313,7 @@ public interface Database extends PrioritizedService {
      * @return Whether data type can have a modifier
      */
     boolean dataTypeIsNotModifiable(String typeName);
+
+    void setObjectQuotingStrategy(ObjectQuotingStrategy quotingStrategy);
 }
 

@@ -51,7 +51,7 @@ public class CreateIndexGeneratorPostgres extends CreateIndexGenerator {
 
 	    if (statement.getIndexName() != null) {
             // for postgres setting the schema name for the index name is invalid
-            buffer.append(database.escapeObjectName(statement.getIndexName(), Index.class)).append(" ");
+            buffer.append(database.correctObjectName(statement.getIndexName(), Index.class)).append(" ");
 	    }
 	    buffer.append("ON ");
 	    buffer.append(database.escapeTableName(statement.getTableCatalogName(), statement.getTableSchemaName(), statement.getTableName())).append("(");

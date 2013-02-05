@@ -253,10 +253,5 @@ public class SybaseASADatabase extends AbstractJdbcDatabase {
     		super.setAutoCommit(b);
         }
 	}
-
-    @Override
-    public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
-        return "\""+objectName+"\"";
-    }
     
 }

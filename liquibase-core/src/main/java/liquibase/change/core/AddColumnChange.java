@@ -104,7 +104,8 @@ public class AddColumnChange extends AbstractChange implements ChangeWithColumns
                 }
 
                 if (column.getConstraints().getReferences() != null) {
-                    constraints.add(new ForeignKeyConstraint(column.getConstraints().getForeignKeyName(), column.getConstraints().getReferences()));
+                    constraints.add(new ForeignKeyConstraint(column.getConstraints().getForeignKeyName(), column.getConstraints().getReferences()
+                    , column.getConstraints().getReferencedTableName(), column.getConstraints().getReferencedColumnNames()));
                 }
 
             }

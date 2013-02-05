@@ -134,11 +134,6 @@ public class MySQLDatabase extends AbstractJdbcDatabase {
     }
 
     @Override
-    public String escapeObjectName(String objectName, Class<? extends DatabaseObject> objectType) {
-        return "`" + objectName + "`";
-    }
-
-    @Override
     public boolean supportsSchemas() {
         return false;
     }
@@ -150,7 +145,7 @@ public class MySQLDatabase extends AbstractJdbcDatabase {
 
     @Override
     public String escapeIndexName(String catalogName, String schemaName, String indexName) {
-        return escapeObjectName(indexName, Index.class);
+        return correctObjectName(indexName, Index.class);
     }
 
     @Override

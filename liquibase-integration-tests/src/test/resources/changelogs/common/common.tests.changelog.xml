@@ -5,7 +5,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
-        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+        objectQuotingStrategy="QUOTE_ALL_OBJECTS">
 
     <property name="table.name" value="paramter_table"/>
     <property file="changelogs/common/dynamic.parameters.properties"/>
@@ -177,9 +178,9 @@
         </createTable>
         <sql>
             <comment>Insert value into commenttest</comment>
-            insert into commenttest (id) values (1);
-            insert into commenttest (id) values (2);
-            insert into commenttest (id) values (3);
+            insert into "commenttest" ("id") values (1);
+            insert into "commenttest" ("id") values (2);
+            insert into "commenttest" ("id") values (3);
         </sql>
     </changeSet>
 
@@ -367,13 +368,13 @@
             <column name="varcharColumn" value="new column 1 value"/>
             <column name="dateCol" valueDate="2008-01-01"/>
             <column name="intCol" valueNumeric="11"/>
-            <where>id=1</where>
+            <where>"id"=1</where>
         </update>
         <update tableName="updateTest">
             <column name="varcharColumn" value="new column 2 value"/>
             <column name="dateCol" valueDate="2008-01-02"/>
             <column name="intCol" valueNumeric="12"/>
-            <where>id=2</where>
+            <where>"id"=2</where>
         </update>
 
     </changeSet>
@@ -407,7 +408,7 @@
         </insert>
 
         <delete tableName="deleteTest">
-            <where>id=1</where>
+            <where>"id"=1</where>
         </delete>
 
         <delete tableName="deleteTest">
@@ -469,7 +470,7 @@
 
     <changeSet id="sampleCSVData3" author="nvoxland">
         <preConditions>
-            <sqlCheck expectedResult="6">select count(*) from csvdata</sqlCheck>
+            <sqlCheck expectedResult="6">select count(*) from "csvdata"</sqlCheck>
         </preConditions>
         <loadData tableName="csvdata" file="changelogs/sample.data3.csv">
             <column index="0" name="name" type="STRING"/>
@@ -485,7 +486,7 @@
                 <constraints primaryKey="true"/>
             </column>
             <column name="referee" type="int">
-                <constraints foreignKeyName="fk_reftest" references="createtablenamedpk(id)"/>
+                <constraints foreignKeyName="fk_reftest" referencedTableName="createtablenamedpk" referencedColumnNames="id"/>
             </column>
         </createTable>
     </changeSet>
@@ -724,7 +725,7 @@
             <column name="added_col" type="datetime"/>
         </createTable>
 
-        <sql>insert into default_val_computed (id) values (1);</sql>
+        <sql>insert into "default_val_computed" ("id") values (1);</sql>
     </changeSet>
 
     <changeSet id="createTableWithDefault-check" author="nvoxland" dbms="h2,hsql,oracle,db2,mysql,postgresql,mssql"> <!-- not derby -->
@@ -762,8 +763,8 @@
     </changeSet>
     <changeSet id="badSplitTest" author="nvoxland">
         <sql endDelimiter="X">
-            insert into datatable (col) values ('a value with a ;') X
-            insert into datatable (col) values ('another value with a ;') X
+            insert into "datatable" ("col") values ('a value with a ;') X
+            insert into "datatable" ("col") values ('another value with a ;') X
         </sql>
     </changeSet>
 

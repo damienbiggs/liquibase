@@ -11,6 +11,8 @@ public class ConstraintsConfig {
     private String primaryKeyName;
     private String primaryKeyTablespace;
     private String references;
+    private String referencedTableName;
+    private String referencedColumnNames;
     private Boolean unique;
     private String uniqueConstraintName;
     private String check;
@@ -114,4 +116,20 @@ public class ConstraintsConfig {
 	public void setPrimaryKeyTablespace(String primaryKeyTablespace) {
 		this.primaryKeyTablespace = primaryKeyTablespace;
 	}
+
+    public String getReferencedTableName() {
+        return referencedTableName;
+    }
+
+    public void setReferencedTableName(String referencedTableName) {
+        this.referencedTableName = referencedTableName;
+    }
+
+    public String getReferencedColumnNames() {
+        return referencedColumnNames;
+    }
+
+    public void setReferencedColumnNames(String referencedColumnNames) {
+        this.referencedColumnNames = referencedColumnNames;
+    }
 }
