@@ -310,7 +310,7 @@
     </changeSet>
 
     <changeSet id="makeNotnulltest" author="nvoxland">
-        <addNotNullConstraint tableName="commonTypesTest" columnName="intColumn" columnDataType="int" defaultNullValue="0"/>
+        <addNotNullConstraint tableName="commonTypesTest" columnName="intColumn" columnDataType="int"/>
     </changeSet>
 
     <changeSet id="makenulltest" author="nvoxland">

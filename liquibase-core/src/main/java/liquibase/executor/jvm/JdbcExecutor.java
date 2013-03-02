@@ -78,7 +78,7 @@ public class JdbcExecutor extends AbstractExecutor implements Executor {
                         statement = statement.replaceFirst("/\\s*/\\s*$", ""); //remove duplicated /'s
                     }
 
-                    log.debug("Executing EXECUTE database command: "+statement);
+                    log.info("Executing EXECUTE database command: "+statement);
                     if (statement.contains("?")) {
                         stmt.setEscapeProcessing(false);
                     }

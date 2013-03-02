@@ -98,7 +98,7 @@ public class AddNotNullConstraintChange extends AbstractChange {
             
             statements.add(new UpdateStatement(getCatalogName(), getSchemaName(), getTableName())
                     .addNewColumnValue(getColumnName(), defaultValue)
-                    .setWhereClause(getColumnName() + " IS NULL"));
+                    .setWhereClause(database.escapeObjectName(getColumnName(), Column.class) + " IS NULL"));
         }
         
     	statements.add(new SetNullableStatement(getCatalogName(), getSchemaName(), getTableName(), getColumnName(), getColumnDataType(), false));

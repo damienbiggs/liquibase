@@ -899,7 +899,6 @@ public abstract class AbstractIntegrationTest {
         if (database == null) {
             return;
         }
-        database.setObjectQuotingStrategy(ObjectQuotingStrategy.QUOTE_ALL_OBJECTS);
         Liquibase liquibase = createLiquibase(objectQuotingStrategyChangeLog);
         clearDatabase(liquibase);
         liquibase.update(contexts);
